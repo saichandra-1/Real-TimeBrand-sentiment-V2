@@ -158,19 +158,25 @@ with tab2:
     
     with col1:
         st.markdown("#### 🔴 Top Negative Categories")
-        fig, ax = plt.subplots(figsize=(8, 6))
-        neg_cats.head(7).plot(kind='barh', ax=ax, color=NEG_COLOR)
-        ax.set_xlabel('Count')
-        ax.set_title('Top Negative Issue Categories', fontweight='bold')
-        st.pyplot(fig)
+        if len(neg_cats) > 0:
+            fig, ax = plt.subplots(figsize=(8, 6))
+            neg_cats.head(7).plot(kind='barh', ax=ax, color=NEG_COLOR)
+            ax.set_xlabel('Count')
+            ax.set_title('Top Negative Issue Categories', fontweight='bold')
+            st.pyplot(fig)
+        else:
+            st.info("No negative categories found")
     
     with col2:
         st.markdown("#### 🟢 Top Positive Categories")
-        fig, ax = plt.subplots(figsize=(8, 6))
-        pos_cats.head(7).plot(kind='barh', ax=ax, color=POS_COLOR)
-        ax.set_xlabel('Count')
-        ax.set_title('Top Positive Categories', fontweight='bold')
-        st.pyplot(fig)
+        if len(pos_cats) > 0:
+            fig, ax = plt.subplots(figsize=(8, 6))
+            pos_cats.head(7).plot(kind='barh', ax=ax, color=POS_COLOR)
+            ax.set_xlabel('Count')
+            ax.set_title('Top Positive Categories', fontweight='bold')
+            st.pyplot(fig)
+        else:
+            st.info("No positive categories found")
 
 with tab3:
     st.subheader("Sample Comments")
