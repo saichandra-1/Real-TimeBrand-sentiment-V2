@@ -61,13 +61,33 @@ def analyze_sentiment(text, model):
         except:
             pass
     
+    # Keyword-based sentiment as fallback
+    text_lower = text.lower()
+    
+    neg_words = ['bad', 'worst', 'terrible', 'horrible', 'awful', 'poor', 'hate', 'disappointed', 
+                 'never', 'pathetic', 'useless', 'waste', 'disgusting', 'sucks', 'shit', 'fuck',
+                 'late', 'cold', 'stale', 'wrong', 'missing', 'rude', 'cancelled', 'refund']
+    
+    pos_words = ['good', 'great', 'excellent', 'amazing', 'best', 'love', 'awesome', 'fantastic',
+                 'perfect', 'wonderful', 'delicious', 'happy', 'thank', 'appreciate', 'recommend']
+    
+    neg_count = sum(1 for word in neg_words if word in text_lower)
+    pos_count = sum(1 for word in pos_words if word in text_lower)
+    
+    if neg_count > pos_count and neg_count > 0:
+        return 'NEGATIVE', min(0.6 + (neg_count * 0.1), 0.95)
+    elif pos_count > neg_count and pos_count > 0:
+        return 'POSITIVE', min(0.6 + (pos_count * 0.1), 0.95)
+    
+    # TextBlob as last resort
     from textblob import TextBlob
     polarity = TextBlob(text).sentiment.polarity
-    if polarity > 0.1:
-        return 'POSITIVE', abs(polarity)
-    elif polarity < -0.1:
-        return 'NEGATIVE', abs(polarity)
-    return 'NEUTRAL', abs(polarity)
+    
+    if polarity > 0.05:
+        return 'POSITIVE', min(abs(polarity) + 0.4, 0.9)
+    elif polarity < -0.05:
+        return 'NEGATIVE', min(abs(polarity) + 0.4, 0.9)
+    return 'NEUTRAL', 0.5
 
 ISSUE_CATEGORIES = {
     'Delivery Issues': ['delivery', 'late', 'delay', 'slow', 'arrived', 'rider', 'never came', 'missing delivery', 'logistics', 'not delivered'],
